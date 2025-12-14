@@ -2,7 +2,7 @@
    <div class="p-6 max-w-2xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">Quick Apply</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Quick Apply here in Online Form</h1>
         <p class="text-gray-600">Fill out this simple form to apply for scholarships quickly.</p>
     </div>
 

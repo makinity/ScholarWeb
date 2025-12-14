@@ -31,43 +31,69 @@
 
     <!-- Scholarships Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Scholarship Card Template -->
-        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-3">
-                    <h3 class="font-bold text-lg">Scholarship Title</h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded">Open</span>
-                </div>
-                <p class="text-gray-600 text-sm mb-4">Scholarship description will appear here...</p>
-                
-                <div class="space-y-3 mb-6">
-                    <div class="flex items-center text-sm text-gray-600">
-                        <i class="far fa-calendar-alt mr-3"></i>
-                        <span class="font-medium">Deadline:</span>
-                        <span class="ml-auto">March 15, 2024</span>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-600">
-                        <i class="fas fa-users mr-3"></i>
-                        <span class="font-medium">Available Slots:</span>
-                        <span class="ml-auto">50</span>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-600">
-                        <i class="fas fa-graduation-cap mr-3"></i>
-                        <span class="font-medium">Minimum GPA:</span>
-                        <span class="ml-auto">3.0</span>
-                    </div>
-                </div>
 
-                <div class="space-y-3">
-                    <button class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700">
-                        Apply Now
-                    </button>
-                    <button class="w-full border border-gray-300 text-gray-700 py-2.5 rounded-lg hover:bg-gray-50">
-                        View Details
-                    </button>
+        @foreach($scholarships as $scholarship)
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="p-5">
+                    <!-- Category & Status -->
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded">
+                            {{ $scholarship->category }}
+                        </span>
+                        <span class="text-xs font-medium px-2 py-1 rounded 
+                            @if($scholarship->status == 'active') bg-green-100 text-green-800
+                            @elseif($scholarship->status == 'ending_soon') bg-yellow-100 text-yellow-800
+                            @else bg-gray-100 text-gray-800 @endif">
+                            {{ ucfirst(str_replace('_', ' ', $scholarship->status)) }}
+                        </span>
+                    </div>
+                    
+                    <!-- Title -->
+                    <h3 class="font-bold text-gray-900 mb-2 line-clamp-1">{{ $scholarship->title }}</h3>
+                    
+                    <!-- Description -->
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $scholarship->description }}</p>
+                    
+                    <!-- Key Info -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <p class="text-xs text-gray-500">Award</p>
+                            <p class="font-semibold text-green-600">¥{{ number_format($scholarship->award_amount, 0) }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Deadline</p>
+                            <p class="font-semibold">{{ \Carbon\Carbon::parse($scholarship->deadline)->format('M d') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Type</p>
+                            <p class="font-semibold text-sm">{{ $scholarship->award_description }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Applicants</p>
+                            <p class="font-semibold">{{ $scholarship->applications()->count() }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex space-x-2">
+                        <a href="{{ route('view.details', $scholarship) }}" 
+                        class="flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded text-sm text-center hover:bg-gray-50">
+                            Details
+                        </a>
+                        @if($scholarship->status !== 'closed' && $scholarship->deadline > now())
+                            <a href="{{ route('applications.create', $scholarship) }}" 
+                            class="flex-1 px-3 py-2 bg-blue-600 text-white rounded text-sm text-center hover:bg-blue-700">
+                                Apply
+                            </a>
+                        @else
+                            <button class="flex-1 px-3 py-2 bg-gray-200 text-gray-500 rounded text-sm cursor-not-allowed" disabled>
+                                Closed
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
-        </div>
+        @endforeach
         <!-- End Scholarship Card -->
     </div>
 

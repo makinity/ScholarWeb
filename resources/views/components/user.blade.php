@@ -33,6 +33,49 @@
     </style>
 </head>
 <body>
+
+<div class="max-w-7xl mx-auto px-6 pt-4">
+
+    @if (session('success'))
+        <div id="success-alert" class="flash-alert bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 flex justify-between items-center" role="alert">
+            <div>
+                <p class="font-bold">Success!</p>
+                <p>{{ session('success') }}</p>
+            </div>
+            <button type="button" class="close-button text-green-700 hover:text-green-900 font-bold text-xl leading-none transition-all duration-150" onclick="this.closest('.flash-alert').style.display='none';">
+                &times; </button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div id="error-alert" class="flash-alert bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flex justify-between items-center" role="alert">
+            <div>
+                <p class="font-bold">Error!</p>
+                <p>{{ session('error') }}</p>
+            </div>
+            <button type="button" class="close-button text-red-700 hover:text-red-900 font-bold text-xl leading-none transition-all duration-150" onclick="this.closest('.flash-alert').style.display='none';">
+                &times;
+            </button>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div id="validation-errors" class="flash-alert bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flex justify-between items-center" role="alert">
+            <div>
+                <p class="font-bold">Whoops! There were some problems with your input.</p>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button type="button" class="close-button text-red-700 hover:text-red-900 font-bold text-xl leading-none transition-all duration-150 self-start" onclick="this.closest('.flash-alert').style.display='none';">
+                &times;
+            </button>
+        </div>
+    @endif
+
+</div>
     <nav class="bg-white border-b border-gray-200 px-4 py-3">
         <div class="flex flex-wrap justify-between items-center mx-auto">
             <!-- Left side: Logo -->
@@ -86,7 +129,7 @@
                             Account Settings
                         </a>
                         <div class="border-t border-gray-200 my-1"></div>
-                        <form method="POST" action="{{ route('auth.logout') }}">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 text-left">
                                 <i class="fas fa-sign-out-alt mr-3"></i>
@@ -117,7 +160,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('scholarships') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 {{ request()->is('scholars*') ? 'active-nav-link' : '' }}">
+                        <a href="{{ route('scholarships.browse') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 {{ request()->is('scholars*') ? 'active-nav-link' : '' }}">
                             <i class="fas fa-users mr-3 text-gray-500"></i>
                             Browse Scholarships
                         </a>
@@ -126,6 +169,12 @@
                         <a href="{{ route('quick') }}" class="flex items-center px-3 py-2.5 text-blue-600 rounded-lg hover:bg-blue-50">
                             <i class="fas fa-bolt mr-3 text-blue-500"></i>
                             Quick Apply
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user.score') }}" class="flex items-center px-3 py-2.5 text-blue-600 rounded-lg hover:bg-blue-50">
+                            <i class="fas fa-bolt mr-3 text-blue-500"></i>
+                            Score
                         </a>
                     </li>
                 </ul>

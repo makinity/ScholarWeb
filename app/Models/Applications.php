@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Applications extends Model
 {
-    protected $fillable = ['user_id', 'fullname', 'birthday', 'address', 'contact_number', 'email', 'school_name', 'grade_level', 'gpa', 'date_applied', 'status'];
+    protected $fillable = ['user_id', 'scholarship_id', 'full_name', 'birthday', 'address', 'contact_number', 'email', 'school_name', 'grade_level', 'gpa', 'date_applied', 'status', 'grade_file'];
 
     public function user()
     {
@@ -21,6 +21,11 @@ class Applications extends Model
     public function score()
     {
         return $this->hasOne(Score::class);
+    }
+
+    public function scholarship()
+    {
+        return $this->belongsTo(Scholarship::class);
     }
 
 }
