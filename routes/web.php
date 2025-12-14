@@ -51,6 +51,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applications/create/{scholarship}', [ApplicationController::class, 'create'])->name('applications.create');
     Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
+
+    // Evaluation score sheet
+    Route::get('/score', function () {
+        return view('partials.score');
+    })->name('user.score');
     
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -107,13 +112,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/applications/{id}/approve', [ApplicationController::class, 'approve'])->name('admin.applications.approve');
     Route::get('/applications/{id}/reject', [ApplicationController::class, 'reject'])->name('admin.applications.reject');
 
-    Route::get('/score-shit', function(){
-        return view('partials.score');
+    Route::get('/score', function(){
+        return view('admin.score');
     })->name('admin.score');
-
-    Route::get('/score-user', function(){
-        return view('partials.score');
-    })->name('user.score');
 
     
     // Admin Application Review

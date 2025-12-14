@@ -181,9 +181,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('user.score') }}" class="flex items-center px-3 py-2.5 text-blue-600 rounded-lg hover:bg-blue-50">
+                        <a href="{{ route('admin.score') }}" class="flex items-center px-3 py-2.5 text-blue-600 rounded-lg hover:bg-blue-50">
                             <i class="fas fa-bolt mr-3 text-blue-500"></i>
-                            Score SHit Criteria
+                            Score Sheet
                         </a>
                     </li>
 

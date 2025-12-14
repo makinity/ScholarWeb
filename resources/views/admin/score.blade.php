@@ -100,7 +100,7 @@
                                 <i class="fas fa-user text-3xl text-blue-600 dark:text-blue-300"></i>
                             </div>
                             <h2 class="mt-3 text-xl font-bold text-gray-900 dark:text-white">Sheryl N. Aleviado</h2>
-                            <p class="text-gray-600 dark:text-gray-400">Bachelor in Information Technoloty</p>
+                            <p class="text-gray-600 dark:text-gray-400">Bachelor in Information Technology</p>
                             <div class="mt-2">
                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
                                     3rd Year

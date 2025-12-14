@@ -160,7 +160,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('scholarships.browse') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 {{ request()->is('scholars*') ? 'active-nav-link' : '' }}">
+                        <a href="{{ route('scholarships.browse') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 {{ request()->is('scholarships*') ? 'active-nav-link' : '' }}">
                             <i class="fas fa-users mr-3 text-gray-500"></i>
                             Browse Scholarships
                         </a>

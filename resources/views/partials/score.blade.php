@@ -1,4 +1,4 @@
-<x-user>
+<x-user title="Score Sheet">
     <div class="max-w-7xl mx-auto space-y-6">
         {{-- PAGE HEADER --}}
         <div class="flex justify-between items-center mb-6">
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Sheryl Aleviado</h2>
-                    <p class="text-gray-600 dark:text-gray-400">Bachelor of Informatoin Technoloy | 3rd Year</p>
+                    <p class="text-gray-600 dark:text-gray-400">Bachelor of Information Technology | 3rd Year</p>
                     <div class="mt-3">
                         <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Submitted: 2023-11-15</span>
                     </div>
@@ -231,6 +231,10 @@
                         <div class="text-sm font-medium opacity-90">TOTAL SCORE</div>
                         <div class="text-5xl font-bold my-4" id="total-score">0</div>
                         <div class="text-lg opacity-90">out of 100 points</div>
+                        <div id="score-classification" class="inline-flex items-center justify-center px-3 py-1 mt-3 rounded-full text-xs font-semibold bg-white/20 text-white">
+                            Pending review
+                        </div>
+                        <p class="text-sm text-blue-100 mt-2" id="auto-recommendation">Adjust scores to generate a recommendation.</p>
                         
                         <div class="mt-6 space-y-3">
                             <div class="flex justify-between items-center">
@@ -284,12 +288,13 @@
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                                 Final Recommendation
                             </label>
-                            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <select id="final-recommendation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Select recommendation</option>
                                 <option value="accept">Highly Recommend</option>
                                 <option value="consider">Recommend</option>
                                 <option value="reject">Do Not Recommend</option>
                             </select>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">We pre-fill this from the total score—adjust if your judgment differs.</p>
                         </div>
                     </div>
                 </div>
@@ -305,7 +310,7 @@
                             <i class="fas fa-redo mr-2"></i> Reset All Scores
                         </button>
                         
-                        <button type="button" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <button type="button" onclick="window.print()" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             <i class="fas fa-print mr-2"></i> Print Score Sheet
                         </button>
                     </div>
@@ -366,6 +371,49 @@
             // Calculate total
             const totalScore = academicTotal + leadershipTotal + essayScore + financialScore;
             document.getElementById('total-score').textContent = totalScore;
+
+            // Classification and recommendation
+            let classification = 'Pending review';
+            let badgeClass = 'bg-white/20 text-white';
+            let recommendation = { label: 'Select scores to evaluate', value: '' };
+
+            if (totalScore >= 85) {
+                classification = 'Outstanding';
+                badgeClass = 'bg-green-500/20 text-white';
+                recommendation = { label: 'Highly Recommend', value: 'accept' };
+            } else if (totalScore >= 65) {
+                classification = 'Competitive';
+                badgeClass = 'bg-blue-500/20 text-white';
+                recommendation = { label: 'Recommend', value: 'consider' };
+            } else if (totalScore > 0) {
+                classification = 'Below Threshold';
+                badgeClass = 'bg-red-500/20 text-white';
+                recommendation = { label: 'Do Not Recommend', value: 'reject' };
+            }
+
+            const classificationChip = document.getElementById('score-classification');
+            if (classificationChip) {
+                classificationChip.textContent = classification;
+                classificationChip.className = `inline-flex items-center justify-center px-3 py-1 mt-3 rounded-full text-xs font-semibold ${badgeClass}`;
+            }
+
+            const recommendationSelect = document.getElementById('final-recommendation');
+            const recommendationDisplay = document.getElementById('auto-recommendation');
+            let recommendationLabel = recommendation.label;
+
+            if (recommendationSelect) {
+                if (!recommendationSelect.value && recommendation.value) {
+                    recommendationSelect.value = recommendation.value;
+                }
+
+                if (recommendationSelect.value) {
+                    recommendationLabel = recommendationSelect.options[recommendationSelect.selectedIndex].text;
+                }
+            }
+
+            if (recommendationDisplay) {
+                recommendationDisplay.textContent = recommendationLabel;
+            }
             
             // Update timestamp
             const now = new Date();
@@ -383,6 +431,10 @@
             document.getElementById('commitment-select').value = 0;
             document.getElementById('essay-slider').value = 0;
             document.getElementById('financial-slider').value = 0;
+            const finalRecommendation = document.getElementById('final-recommendation');
+            if (finalRecommendation) {
+                finalRecommendation.value = '';
+            }
             
             // Trigger update
             updateScore();
@@ -390,23 +442,34 @@
         
         function submitEvaluation() {
             const totalScore = parseInt(document.getElementById('total-score').textContent);
+            const recommendationSelect = document.getElementById('final-recommendation');
             
             // Determine recommendation based on score
-            let recommendation = '';
+            let recommendation = 'Do Not Recommend';
+            let recommendationValue = 'reject';
             if (totalScore >= 85) {
-                recommendation = 'Highly Recommended';
+                recommendation = 'Highly Recommend';
+                recommendationValue = 'accept';
             } else if (totalScore >= 65) {
-                recommendation = 'Recommended';
-            } else {
-                recommendation = 'Not Recommended';
+                recommendation = 'Recommend';
+                recommendationValue = 'consider';
             }
+
+            if (recommendationSelect && recommendationSelect.value) {
+                recommendationValue = recommendationSelect.value;
+                recommendation = recommendationSelect.options[recommendationSelect.selectedIndex].text;
+            }
+
+            const classification = document.getElementById('score-classification')?.textContent || 'Pending review';
             
             // Show confirmation modal or alert
-            if (confirm(`Submit evaluation with total score of ${totalScore}/100?`)) {
+            if (confirm(`Submit evaluation with total score of ${totalScore}/100?\nClassification: ${classification}\nRecommendation: ${recommendation}`)) {
                 // Here you would typically submit to server
                 console.log('Evaluation submitted:', {
                     totalScore,
                     recommendation,
+                    recommendationValue,
+                    classification,
                     timestamp: new Date().toISOString()
                 });
                 
@@ -426,6 +489,12 @@
             document.getElementById('commitment-select').value = 4;
             document.getElementById('essay-slider').value = 19;
             document.getElementById('financial-slider').value = 15;
+
+            const recommendationSelect = document.getElementById('final-recommendation');
+            if (recommendationSelect) {
+                recommendationSelect.value = '';
+                recommendationSelect.addEventListener('change', updateScore);
+            }
             
             // Initial update
             updateScore();
